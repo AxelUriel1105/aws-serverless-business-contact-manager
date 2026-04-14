@@ -8,23 +8,13 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: PhoneBook-AxelAparicio
-    VpcConfig:
-      SecurityGroupIds:
-        - sg-0eb9f52b05aeb4f45
-      SubnetIds:
-        - subnet-03408608ea7070ddf
-        - subnet-0024eff908ad31a68
-        - subnet-0b0427fcd6d615ca2
 
 Resources:
   PhoneBookTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: PhoneBook-AxelAparicio
-      BillingMode: PROVISIONED
-      ProvisionedThroughput:
-        ReadCapacityUnits: 100
-        WriteCapacityUnits: 5000
+      BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
@@ -40,9 +30,6 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 100
-            WriteCapacityUnits: 5000
             
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
