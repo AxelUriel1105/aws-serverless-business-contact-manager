@@ -173,7 +173,7 @@ Resources:
   CsvBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: phone-book-csv-axel-aparicio
+      BucketName: phone-book-csv-axel-portafolio
       NotificationConfiguration:
         EventBridgeConfiguration:
           EventBridgeEnabled: true
@@ -187,7 +187,7 @@ Resources:
       MemorySize: 256
       Policies:
         - S3ReadPolicy:
-            BucketName: phone-book-csv-axel-aparicio
+            BucketName: phone-book-csv-axel-portafolio
 
   CsvProcessorFunction:
     Type: AWS::Serverless::Function
@@ -203,12 +203,13 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: PhoneBook-AxelAparicio
         - S3ReadPolicy:
-            BucketName: phone-book-csv-axel-aparicio
+            BucketName: phone-book-csv-axel-portafolio
 
   CsvStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
-      Name: CsvStateMachine-AxelAparicio
+      Name: CsvStateMachine-AxelAparicio-Express
+      Type: EXPRESS
       Definition:
         StartAt: CalculateChunks
         States:
@@ -245,15 +246,14 @@ Resources:
               detail:
                 bucket:
                   name:
-                    - phone-book-csv-axel-aparicio
+                    - phone-book-csv-axel-portafolio
                 object:
                   key:
                     - suffix: .csv
-
   FrontendBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: phone-book-axel-aparicio
+      BucketName: phone-book-front-axel-portafolio
 
   CloudFrontOAC:
     Type: AWS::CloudFront::OriginAccessControl
@@ -294,7 +294,7 @@ Resources:
             Principal:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
-            Resource: !Sub "arn:aws:s3:::phone-book-axel-aparicio/*"
+            Resource: !Sub "arn:aws:s3:::phone-book-front-axel-portafolio/*"
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"

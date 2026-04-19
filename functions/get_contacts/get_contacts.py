@@ -1,28 +1,42 @@
 import json
-import boto3
 import os
+import boto3
+from decimal import Decimal
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['TABLE_NAME'])
-dynamodb_client = boto3.client('dynamodb', region_name='eu-west-1')
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj) if obj % 1 > 0 else int(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 def lambda_handler(event, context):
-    params = event.get('queryStringParameters') or {}
-    limit = int(params.get('limit', 10))
-
-    result = table.scan(Limit=limit)
-
-    table_info = dynamodb_client.describe_table(TableName=os.environ['TABLE_NAME'])
-    total = table_info['Table']['ItemCount']
-
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({
-            'items': result['Items'],
-            'total': total
-        })
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE"
     }
+
+    try:
+        response = table.scan()
+        items = response.get('Items', [])
+        
+        body = {
+            "items": items,
+            "total": len(items)
+        }
+
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps(body, cls=DecimalEncoder)
+        }
+        
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "headers": headers,
+            "body": json.dumps({"error": str(e)})
+        }
