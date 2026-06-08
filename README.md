@@ -25,6 +25,7 @@ Traditional contact managers often struggle with large-scale data imports or inc
 * **Web Delivery:** The frontend is hosted in a private S3 bucket, served globally via CloudFront with Origin Access Control (OAC).
 * **API Layer:** API Gateway validates JWT tokens before triggering backend logic.
 * **Data Ingestion:** Large CSV files uploaded to S3 trigger an EventBridge rule, starting a Step Function that coordinates parallel Lambda workers to process data chunks into DynamoDB.
+<img width="2369" height="1260" alt="Intern Phone Book - Main" src="https://github.com/user-attachments/assets/c844720f-4eb0-4185-a229-6993c485f38e" />
 
 ## 📥 Getting Started
 
